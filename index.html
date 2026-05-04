@@ -3,64 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKS Speedtest Starlink Edition</title>
+    <title>AKS Speedtest Enterprise - Multi Thread</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;700&display=swap');
         :root {
-            --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #e2e8f0;
-            --text2: #94a3b8; --accent: #ef4444; --glow: rgba(239, 68, 68, 0.4); --green: #22c55e;
+            --bg: #0a0f1e; --card: rgba(15, 23, 42, 0.8); --border: rgba(51, 65, 85, 0.5);
+            --text: #e2e8f0; --text2: #94a3b8; --accent: #ef4444; --glow: rgba(239, 68, 68, 0.3);
+            --green: #22c55e; --blue: #3b82f6;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; transition: 0.3s; }
         body {
-            background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif;
-            display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;
+            background: radial-gradient(ellipse at top, #1e293b, var(--bg));
+            color: var(--text); font-family: 'Poppins', sans-serif;
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 15px;
         }
       .card {
-            background: var(--card); border: 1px solid var(--border); border-radius: 24px;
-            padding: 30px; max-width: 650px; width: 100%; text-align: center;
-            box-shadow: 0 0 60px var(--glow);
+            background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border);
+            border-radius: 28px; padding: 25px; max-width: 700px; width: 100%; text-align: center;
+            box-shadow: 0 0 80px var(--glow), inset 0 0 20px rgba(255,255,255,0.05);
         }
       .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-      .logo-wrap { display: flex; align-items: center; gap: 10px; }
-      .logo-aks { width: 50px; border-radius: 50%; border: 2px solid var(--accent); }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 24px; }
-        h1 span { color: var(--accent); }
-      .chart-container { position: relative; height: 200px; margin: 15px auto; }
-        #status { color: #fbbf24; margin: 15px 0; font-weight: 600; min-height: 24px; font-family: 'Orbitron'; }
+      .logo-wrap { display: flex; align-items: center; gap: 12px; }
+      .logo-aks { width: 55px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 20px var(--glow); }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 26px; }
+        h1 span { color: var(--accent); text-shadow: 0 0 20px var(--glow); }
+      .badge { background: var(--blue); color: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+      .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+      .chart-box { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 16px; padding: 15px; }
+      .chart-box h3 { font-size: 11px; color: var(--text2); margin-bottom: 10px; text-transform: uppercase; }
+        #status { color: #fbbf24; margin: 15px 0; font-weight: 600; min-height: 24px; font-family: 'Orbitron'; font-size: 14px; }
       .hasil { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
-      .box { background: var(--bg); padding: 15px 5px; border-radius: 12px; border: 1px solid var(--border); }
+      .box { background: rgba(15, 23, 42, 0.6); padding: 15px 5px; border-radius: 14px; border: 1px solid var(--border); }
       .box h3 { color: var(--text2); font-size: 10px; margin-bottom: 8px; text-transform: uppercase; }
-      .angka { font-family: 'Orbitron', sans-serif; font-size: 20px; color: var(--text); }
+      .angka { font-family: 'Orbitron', sans-serif; font-size: 22px; color: var(--text); }
       .satuan { font-size: 10px; color: var(--text2); }
-      .network-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-      .network-box { background: var(--bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: left; }
-      .network-box h4 { font-size: 10px; color: var(--text2); margin-bottom: 5px; }
-      .network-box p { font-size: 13px; font-weight: 600; color: var(--text); word-break: break-all; }
-      .network-box.signal { color: var(--green); }
-      .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
+      .network-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+      .network-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: left; }
+      .network-box h4 { font-size: 9px; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; }
+      .network-box p { font-size: 12px; font-weight: 600; color: var(--text); word-break: break-all; }
+      .network-box.starlink { color: var(--blue); border-color: var(--blue); }
+      .btn-group { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
       .btn-test {
             background: linear-gradient(45deg, #dc2626, var(--accent)); color: white;
-            padding: 16px; border-radius: 15px; border: none; font-weight: 700;
-            font-size: 16px; cursor: pointer; box-shadow: 0 0 25px var(--glow);
+            padding: 16px; border-radius: 16px; border: none; font-weight: 700;
+            font-size: 15px; cursor: pointer; box-shadow: 0 0 30px var(--glow);
         }
-      .btn-share { background: var(--bg); border: 1px solid var(--border); color: var(--text); }
+      .btn-small { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); color: var(--text); }
       .btn-test:disabled { background: #475569; box-shadow: none; }
-        @media (max-width: 600px) {.hasil { grid-template-columns: 1fr 1fr; }.network-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) {
+          .hasil { grid-template-columns: 1fr 1fr; }
+          .network-grid { grid-template-columns: 1fr 1fr; }
+          .chart-grid { grid-template-columns: 1fr; }
+          .btn-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card" id="captureArea">
         <div class="header">
             <div class="logo-wrap">
                 <img src="./logo.png" alt="AKS" class="logo-aks">
-                <h1>AKS <span>STARLINK FIX</span></h1>
+                <div>
+                    <h1>AKS <span>ENTERPRISE</span></h1>
+                    <div class="badge" id="serverBadge">AUTO SERVER</div>
+                </div>
             </div>
         </div>
 
-        <div class="chart-container"><canvas id="speedChart"></canvas></div>
-        <div id="status">Siap ngetes Starlink lu bos 🛰️</div>
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3><i class="fa-solid fa-chart-line"></i> Speed Graph</h3>
+                <canvas id="speedChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fa-solid fa-wave-square"></i> Latency Graph</h3>
+                <canvas id="pingChart"></canvas>
+            </div>
+        </div>
+
+        <div id="status">Multi-Thread Ready. Pencet GO bos 🛰️</div>
 
         <div class="hasil">
             <div class="box"><h3><i class="fa-solid fa-download"></i> Download</h3><div class="angka" id="download">-</div><div class="satuan">Mbps</div></div>
@@ -70,146 +94,184 @@
         </div>
 
         <div class="network-grid">
-            <div class="network-box"><h4><i class="fa-solid fa-globe"></i> IP PUBLIK</h4><p id="ipPublic">...</p></div>
-            <div class="network-box"><h4><i class="fa-solid fa-house-signal"></i> IP LOKAL</h4><p id="ipLocal">...</p></div>
-            <div class="network-box"><h4><i class="fa-solid fa-tower-cell"></i> JENIS JARINGAN</h4><p id="netType" class="signal">...</p></div>
-            <div class="network-box"><h4><i class="fa-solid fa-gauge-high"></i> KUALITAS SINYAL</h4><p id="netEffective" class="signal">...</p></div>
-            <div class="network-box"><h4><i class="fa-solid fa-wifi"></i> ISP / PROVIDER</h4><p id="isp">...</p></div>
-            <div class="network-box"><h4><i class="fa-solid fa-location-dot"></i> LOKASI</h4><p id="lokasi">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-globe"></i> IP Publik</h4><p id="ipPublic">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-house-signal"></i> IP Lokal</h4><p id="ipLocal">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-microchip"></i> Threads</h4><p id="threads">6 Active</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-tower-cell"></i> Jaringan</h4><p id="netType">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-gauge-high"></i> Kualitas</h4><p id="netEffective">...</p></div>
+            <div class="network-box" id="ispBox"><h4><i class="fa-solid fa-wifi"></i> ISP</h4><p id="isp">...</p></div>
         </div>
 
         <div class="btn-group">
-            <button class="btn-test" id="startBtn"><i class="fa-solid fa-bolt"></i> TEST STARLINK</button>
-            <button class="btn-test btn-share" id="shareBtn" disabled><i class="fa-brands fa-whatsapp"></i> SHARE</button>
+            <button class="btn-test" id="startBtn"><i class="fa-solid fa-bolt"></i> GO MULTI-THREAD</button>
+            <button class="btn-test btn-small" id="shareBtn" disabled><i class="fa-brands fa-whatsapp"></i></button>
+            <button class="btn-test btn-small" id="saveBtn" disabled><i class="fa-solid fa-camera"></i></button>
         </div>
     </div>
 
 <script>
 const el = id => document.getElementById(id);
-const statusText = el('status'), startBtn = el('startBtn'), shareBtn = el('shareBtn');
-let chart, testData = {};
+const statusText = el('status'), startBtn = el('startBtn'), shareBtn = el('shareBtn'), saveBtn = el('saveBtn');
+let speedChart, pingChart, testData = {}, speedData = [], pingData = [], isStarlink = false;
 
-// Chart
-const ctx = el('speedChart').getContext('2d');
-chart = new Chart(ctx, {
-    type: 'doughnut',
-    data: { datasets: [{ data: [0, 100], backgroundColor: ['#ef4444', '#334155'], borderWidth: 0 }] },
-    options: { cutout: '80%', rotation: -90, circumference: 180, plugins: { legend: { display: false }, tooltip: { enabled: false } } }
-});
-function updateChart(speed, max = 200) {
-    const percent = Math.min((speed / max) * 100, 100);
-    chart.data.datasets[0].data = [percent, 100 - percent];
-    chart.update('none');
-    statusText.innerHTML = `${speed.toFixed(2)} Mbps`;
+// Chart Setup
+function initCharts() {
+    const chartOpt = {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { point: { radius: 0 }, line: { tension: 0.4 } }
+    };
+    speedChart = new Chart(el('speedChart'), {
+        type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#ef4444', borderWidth: 2, fill: true, backgroundColor: 'rgba(239,68,68,0.1)' }] }, options: chartOpt
+    });
+    pingChart = new Chart(el('pingChart'), {
+        type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#3b82f6', borderWidth: 2, fill: true, backgroundColor: 'rgba(59,130,246,0.1)' }] }, options: chartOpt
+    });
+}
+initCharts();
+
+function updateSpeedChart(speed) {
+    speedData.push(speed);
+    if (speedData.length > 20) speedData.shift();
+    speedChart.data.labels = speedData.map((_, i) => i);
+    speedChart.data.datasets[0].data = speedData;
+    speedChart.update('none');
 }
 
-// Deteksi Network
+function updatePingChart(ping) {
+    pingData.push(ping);
+    if (pingData.length > 20) pingData.shift();
+    pingChart.data.labels = pingData.map((_, i) => i);
+    pingChart.data.datasets[0].data = pingData;
+    pingChart.update('none');
+}
+
+// Network Detect
 function detectNetwork() {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (conn) {
         el('netType').textContent = (conn.type || 'WIFI').toUpperCase();
-        el('netEffective').textContent = `${conn.effectiveType.toUpperCase()} | ${conn.downlink || '?'} Mbps`;
-        testData.netType = conn.type; testData.netEffective = conn.effectiveType; testData.downlink = conn.downlink;
-    } else {
-        el('netType').textContent = 'WIFI/STARLINK'; el('netEffective').textContent = '4G';
+        el('netEffective').textContent = `${conn.effectiveType.toUpperCase()} | ${conn.downlink || '?'}M`;
+        testData.netType = conn.type; testData.netEffective = conn.effectiveType;
     }
 }
 
-// IP Lokal
-function getLocalIP() {
-    return new Promise((resolve) => {
-        const pc = new RTCPeerConnection({iceServers:[]});
-        pc.createDataChannel('');
-        pc.createOffer().then(offer => pc.setLocalDescription(offer));
-        pc.onicecandidate = (ice) => {
-            if (!ice ||!ice.candidate ||!ice.candidate.candidate) return;
-            const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate);
-            if (ip) {
-                el('ipLocal').textContent = ip[1];
-                testData.ipLocal = ip[1];
-                pc.onicecandidate = () => {};
-                resolve(ip[1]);
-            }
-        };
-        setTimeout(() => { el('ipLocal').textContent = 'Tidak Terdeteksi'; resolve(null); }, 1500);
-    });
-}
-
-// IP Publik + ISP
+// IP Detect
 fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
     el('ipPublic').textContent = data.ip;
     el('isp').textContent = data.org;
-    el('lokasi').textContent = `${data.city}, ${data.country_code}`;
     testData.ipPublic = data.ip; testData.isp = data.org; testData.lokasi = data.city;
+    // Auto detect Starlink
+    if (data.org.toLowerCase().includes('starlink')) {
+        isStarlink = true;
+        el('ispBox').classList.add('starlink');
+        el('serverBadge').textContent = 'STARLINK MODE';
+        el('serverBadge').style.background = '#3b82f6';
+    }
 });
 
-detectNetwork(); getLocalIP();
+// Local IP
+new RTCPeerConnection({iceServers:[]}).createDataChannel('');
+new RTCPeerConnection({iceServers:[]}).onicecandidate = e => {
+    if (e.candidate) {
+        const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate);
+        if (ip) { el('ipLocal').textContent = ip[1]; testData.ipLocal = ip[1]; }
+    }
+};
 
-// SPEEDTEST STARLINK COMPATIBLE
-async function runSpeedTest() {
-    startBtn.disabled = true; shareBtn.disabled = true;
-    el('download').textContent = '-'; el('upload').textContent = '-';
+detectNetwork();
+
+// MULTI-THREAD SPEEDTEST
+async function runMultiThreadTest() {
+    startBtn.disabled = true; shareBtn.disabled = true; saveBtn.disabled = true;
+    speedData = []; pingData = [];
+
     try {
-        // 1. Ping Test - Pake Google biar gak diblock Starlink
-        statusText.textContent = 'Test Ping Starlink...';
+        // 1. PING TEST 10x
+        statusText.textContent = 'Testing Latency...';
         let pings = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             let start = performance.now();
             await fetch('https://www.google.com/favicon.ico?t=' + Date.now(), { cache: 'no-store', mode: 'no-cors' });
-            pings.push(performance.now() - start);
+            let ping = performance.now() - start;
+            pings.push(ping);
+            updatePingChart(ping);
+            el('ping').textContent = ping.toFixed(0);
         }
         testData.ping = (pings.reduce((a, b) => a + b) / pings.length).toFixed(0);
         let avg = pings.reduce((a, b) => a + b) / pings.length;
         testData.jitter = Math.sqrt(pings.map(x => Math.pow(x - avg, 2)).reduce((a, b) => a + b) / pings.length).toFixed(0);
-        el('ping').textContent = testData.ping; el('jitter').textContent = testData.jitter;
+        el('jitter').textContent = testData.jitter;
 
-        // 2. Download Test - Pake file kecil + multi server biar Starlink lolos
-        statusText.textContent = 'Test Download Starlink...';
-        const servers = [
-            'https://sgp-speedtest.fast.com/app-5MB.data', // Fast.com Singapore
-            'https://cachefly.cachefly.net/10mb.test', // Cachefly
-            'https://speed.cloudflare.com/__down?bytes=10000000' // Cloudflare 10MB
+        // 2. MULTI-THREAD DOWNLOAD - 6 streams
+        statusText.textContent = 'Multi-Thread Download 6x...';
+        const downloadUrls = isStarlink? [
+            'https://sgp-speedtest.fast.com/1GB.data',
+            'https://cachefly.cachefly.net/10mb.test',
+            'https://proof.ovh.net/files/10Mb.dat'
+        ] : [
+            'https://speed.cloudflare.com/__down?bytes=25000000',
+            'https://speed.cloudflare.com/__down?bytes=25000000',
+            'https://speed.cloudflare.com/__down?bytes=25000000'
         ];
-        let totalSpeed = 0, success = 0;
-        for (let url of servers) {
-            try {
-                const startTime = performance.now();
-                const res = await fetch(url + '?r=' + Math.random(), { cache: 'no-store' });
-                const blob = await res.blob();
-                const duration = (performance.now() - startTime) / 1000;
-                const speed = ((blob.size * 8) / duration / 1024 / 1024);
-                if (speed > 0) { totalSpeed += speed; success++; }
-            } catch (e) {}
-        }
-        testData.download = success? (totalSpeed / success).toFixed(2) : '0';
-        el('download').textContent = testData.download; updateChart(testData.download);
 
-        // 3. Upload Test - Pake file 1MB aja biar gak timeout di Starlink
-        statusText.textContent = 'Test Upload Starlink...';
-        const data = new Blob([new ArrayBuffer(1 * 1024 * 1024)]); // 1MB
-        const startUp = performance.now();
-        try {
-            await fetch('https://httpbin.org/post', { method: 'POST', body: data, mode: 'no-cors' });
-            const duration = (performance.now() - startUp) / 1000;
-            testData.upload = ((data.size * 8) / duration / 1024 / 1024).toFixed(2);
-        } catch (e) {
-            testData.upload = '0'; // Starlink upload sering gagal
-        }
-        el('upload').textContent = testData.upload; updateChart(testData.upload);
+        const startTime = performance.now();
+        let totalBytes = 0;
 
-        statusText.textContent = 'Test Starlink Selesai! 🛰️✅';
-        shareBtn.disabled = false;
+        const downloadPromises = Array(6).fill().map(async (_, i) => {
+            const url = downloadUrls[i % downloadUrls.length] + '?r=' + Math.random();
+            const res = await fetch(url, { cache: 'no-store' });
+            const reader = res.body.getReader();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                totalBytes += value.length;
+                const speed = ((totalBytes * 8) / ((performance.now() - startTime) / 1000) / 1024 / 1024);
+                updateSpeedChart(speed);
+                el('download').textContent = speed.toFixed(2);
+            }
+        });
+
+        await Promise.all(downloadPromises);
+        testData.download = ((totalBytes * 8) / ((performance.now() - startTime) / 1000) / 1024 / 1024).toFixed(2);
+        el('download').textContent = testData.download;
+
+        // 3. UPLOAD TEST - 3 streams
+        statusText.textContent = 'Multi-Thread Upload 3x...';
+        const uploadData = new Blob([new ArrayBuffer(2 * 1024 * 1024)]); // 2MB x 3
+        const upStart = performance.now();
+        await Promise.all(Array(3).fill().map(() =>
+            fetch('https://httpbin.org/post', { method: 'POST', body: uploadData, mode: 'no-cors' })
+        ));
+        const upDuration = (performance.now() - upStart) / 1000;
+        testData.upload = ((uploadData.size * 3 * 8) / upDuration / 1024 / 1024).toFixed(2);
+        el('upload').textContent = testData.upload;
+
+        statusText.textContent = 'Test Complete! Enterprise Grade ✅';
+        shareBtn.disabled = false; saveBtn.disabled = false;
     } catch (e) {
-        statusText.textContent = 'Starlink nge-block bos 😅 Tapi Ping jalan';
+        statusText.textContent = 'Error: ' + e.message;
     }
     startBtn.disabled = false;
 }
 
-startBtn.onclick = runSpeedTest;
+startBtn.onclick = runMultiThreadTest;
 
+// Share
 shareBtn.onclick = () => {
-    const text = `📡 Hasil Speedtest Starlink AKS:\n\n📥 Download: ${testData.download} Mbps\n📤 Upload: ${testData.upload} Mbps\n📶 Ping: ${testData.ping}ms | Jitter: ${testData.jitter}ms\n\n🌐 IP: ${testData.ipPublic}\n🛰️ ISP: ${testData.isp}\n📍 ${testData.lokasi}\n\nTest: ${window.location.href}`;
+    const text = `🛰️ AKS Speedtest Enterprise:\n\n📥 ${testData.download} Mbps | 📤 ${testData.upload} Mbps\n📶 Ping: ${testData.ping}ms | Jitter: ${testData.jitter}ms\n🌐 ${testData.isp}\n📍 ${testData.lokasi}\n\nTest: ${window.location.href}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+};
+
+// Save PNG
+saveBtn.onclick = () => {
+    html2canvas(el('captureArea')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `AKS-Speedtest-${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    });
 };
 </script>
 </body>
