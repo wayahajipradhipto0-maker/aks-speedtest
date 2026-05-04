@@ -194,10 +194,10 @@
             document.getElementById('ul').textContent = ulSpeed;
 
             status.classList.remove('running');
-            status.textContent = `Test #${testCount} selesai. Test berikutnya 10 detik lagi...`;
+            status.textContent = `Test #${testCount} selesai. Test berikutnya 1 detik lagi...`;
             
             // Loop tiap 10 detik
-            if (running) setTimeout(runTest, 10000);
+            if (running) setTimeout(runTest, 1000);
         }
 
         function updateGraph(speed) {
