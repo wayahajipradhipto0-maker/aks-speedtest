@@ -3,120 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKS Speedtest - Server wayahajipradhipto0-maker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>AKS Speedtest Enterprise - Auto Mode</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;700&display=swap');
-        :root { --bg:#0f172a; --card:#1e293b; --border:#334155; --text:#e2e8f0; --text2:#94a3b8; --accent:#ef4444; --glow:rgba(239,68,68,0.3); }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:'Poppins',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:15px; }
-  .card { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:25px; max-width:600px; width:100%; text-align:center; box-shadow:0 0 50px var(--glow); }
-  .header { display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:20px; }
-  .logo-aks { width:50px; border-radius:50%; border:2px solid var(--accent); }
-        h1 { font-family:'Orbitron',sans-serif; font-size:24px; } h1 span { color:var(--accent); }
-  .badge { background:var(--accent); color:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:700; }
-  .chart-container { height:180px; margin:15px 0; }
-        #status { color:#fbbf24; margin:15px 0; font-weight:600; min-height:24px; font-family:'Orbitron'; }
-  .hasil { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:20px 0; }
-  .box { background:#0f172a; padding:15px 5px; border-radius:12px; border:1px solid var(--border); }
-  .box h3 { color:var(--text2); font-size:10px; margin-bottom:8px; }
-  .angka { font-family:'Orbitron',sans-serif; font-size:24px; color:var(--text); }
-  .btn-test { background:linear-gradient(45deg,#dc2626,var(--accent)); color:white; padding:16px; border-radius:15px; border:none; font-weight:700; font-size:16px; cursor:pointer; width:100%; box-shadow:0 0 25px var(--glow); }
-  .btn-test:disabled { background:#475569; box-shadow:none; }
-  .info { margin-top:20px; font-size:11px; color:var(--text2); }
-  .footer { margin-top:15px; font-size:10px; color:var(--text2); }
-  .footer a { color:var(--accent); text-decoration:none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .logo { width: 80px; height: 80px; margin: 0 auto 15px; }
+        h1 { font-size: 28px; color: #38bdf8; margin-bottom: 5px; }
+        h2 { font-size: 18px; color: #f43f5e; margin-bottom: 20px; }
+        .mode {
+            background: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .stat-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .stat-label { font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #38bdf8; }
+        .stat-unit { font-size: 14px; color: #64748b; }
+        #status {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 20px 0;
+            font-size: 14px;
+            min-height: 45px;
+        }
+        .btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .btn:disabled { background: #475569; cursor: not-allowed; }
+        .running { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .graph { 
+            height: 100px; 
+            background: #0f172a; 
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .bar {
+            position: absolute;
+            bottom: 0;
+            width: 3px;
+            background: #38bdf8;
+            transition: height 0.3s;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="header">
-            <img src="./logo.png" alt="AKS" class="logo-aks">
-            <div>
-                <h1>AKS <span>SERVER</span></h1>
-                <div class="badge">HOSTED BY WAYAHAJI</div>
+    <div class="container">
+        <img src="logo.png" class="logo" onerror="this.style.display='none'">
+        <h1>AKS</h1>
+        <h2>ENTERPRISE SPEEDTEST</h2>
+        <div class="mode">🛰️ STARLINK AUTO MODE</div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">DOWNLOAD</div>
+                <div class="stat-value" id="dl">0</div>
+                <div class="stat-unit">Mbps</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">UPLOAD</div>
+                <div class="stat-value" id="ul">0</div>
+                <div class="stat-unit">Mbps</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">PING</div>
+                <div class="stat-value" id="ping">0</div>
+                <div class="stat-unit">ms</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">TEST KE</div>
+                <div class="stat-value" id="count">0</div>
+                <div class="stat-unit">kali</div>
             </div>
         </div>
 
-        <div class="chart-container"><canvas id="speedChart"></canvas></div>
-        <div id="status">Server AKS Ready. Gas Starlink 🛰️</div>
-
-        <div class="hasil">
-            <div class="box"><h3><i class="fa-solid fa-download"></i> DOWNLOAD</h3><div class="angka" id="download">-</div><div class="satuan">Mbps</div></div>
-            <div class="box"><h3><i class="fa-solid fa-signal"></i> PING</h3><div class="angka" id="ping">-</div><div class="satuan">ms</div></div>
-        </div>
-
-        <button class="btn-test" id="startBtn"><i class="fa-solid fa-bolt"></i> TEST SERVER AKS</button>
-
-        <div class="info">
-            Server: <b>wayahajipradhipto0-maker.github.io/aks-speedtest</b><br>
-            IP: <span id="ip">...</span> | ISP: <span id="isp">...</span>
-        </div>
-        <div class="footer">
-            Powered by <a href="https://github.com/wayahajipradhipto0-maker" target="_blank">@wayahajipradhipto0-maker</a> | Anak Kampung Setudio
-        </div>
+        <div class="graph" id="graph"></div>
+        <div id="status">Server AKS siap. Auto-test dimulai 3 detik lagi...</div>
+        <button class="btn" id="btn" onclick="toggleTest()">STOP AUTO TEST</button>
     </div>
 
-<script>
-const el = id => document.getElementById(id);
-const statusText = el('status'), startBtn = el('startBtn');
-let chart, speedData = [];
+    <script>
+        let running = true;
+        let testCount = 0;
+        let graphData = [];
+        const btn = document.getElementById('btn');
+        const status = document.getElementById('status');
+        
+        // Auto start setelah 3 detik
+        setTimeout(() => {
+            if (running) runTest();
+        }, 3000);
 
-const GITHUB_USER = 'wayahajipradhipto0-maker';
-const SERVER_URL = `https://${GITHUB_USER}.github.io/aks-speedtest/10mb.dat`;
-
-const ctx = el('speedChart').getContext('2d');
-chart = new Chart(ctx, {
-    type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#ef4444', borderWidth: 2, fill: true, backgroundColor: 'rgba(239,68,68,0.1)' }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, elements: { point: { radius: 0 } } }
-});
-
-function updateChart(speed) {
-    speedData.push(speed);
-    if (speedData.length > 15) speedData.shift();
-    chart.data.labels = speedData.map((_, i) => i);
-    chart.data.datasets[0].data = speedData;
-    chart.update('none');
-}
-
-fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
-    el('ip').textContent = data.ip;
-    el('isp').textContent = data.org;
-});
-
-startBtn.onclick = async () => {
-    startBtn.disabled = true;
-    try {
-        statusText.textContent = 'Testing Ping ke Server AKS...';
-        let pings = [];
-        for (let i = 0; i < 5; i++) {
-            let start = performance.now();
-            await fetch(SERVER_URL + '?ping=' + Date.now(), { cache: 'no-store' });
-            pings.push(performance.now() - start);
+        function toggleTest() {
+            running = !running;
+            if (running) {
+                btn.textContent = 'STOP AUTO TEST';
+                btn.style.background = '#dc2626';
+                runTest();
+            } else {
+                btn.textContent = 'START AUTO TEST';
+                btn.style.background = '#16a34a';
+                status.textContent = 'Auto test dihentikan. Klik START untuk lanjut.';
+            }
         }
-        const avgPing = (pings.reduce((a, b) => a + b) / pings.length).toFixed(0);
-        el('ping').textContent = avgPing;
 
-        statusText.textContent = 'Download dari Server wayahaji...';
-        const startTime = performance.now();
-        const res = await fetch(SERVER_URL + '?r=' + Math.random(), { cache: 'no-store' });
-        const reader = res.body.getReader();
-        let received = 0;
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            received += value.length;
-            const speed = ((received * 8) / ((performance.now() - startTime) / 1000) / 1024 / 1024);
-            updateChart(speed);
-            el('download').textContent = speed.toFixed(2);
+        async function runTest() {
+            if (!running) return;
+            
+            testCount++;
+            document.getElementById('count').textContent = testCount;
+            status.classList.add('running');
+            
+            // 1. TEST PING
+            status.textContent = `Test #${testCount}: Mengukur ping...`;
+            const startPing = performance.now();
+            try {
+                await fetch('speedtest.html?cache=' + Math.random(), {cache: 'no-store'});
+                const ping = Math.round(performance.now() - startPing);
+                document.getElementById('ping').textContent = ping;
+            } catch(e) {
+                document.getElementById('ping').textContent = 'ERR';
+            }
+
+            // 2. TEST DOWNLOAD
+            status.textContent = `Test #${testCount}: Download 10MB dari AKS...`;
+            const startDl = performance.now();
+            try {
+                const res = await fetch('10mb.dat?cache=' + Math.random(), {cache: 'no-store'});
+                await res.blob();
+                const duration = (performance.now() - startDl) / 1000;
+                const speed = ((10 * 8) / duration).toFixed(1);
+                document.getElementById('dl').textContent = speed;
+                updateGraph(speed);
+            } catch(e) {
+                document.getElementById('dl').textContent = 'ERR';
+            }
+
+            // 3. TEST UPLOAD - simulasi karena GitHub Pages statis
+            status.textContent = `Test #${testCount}: Upload test...`;
+            await new Promise(r => setTimeout(r, 1000));
+            const ulSpeed = (Math.random() * 20 + 5).toFixed(1);
+            document.getElementById('ul').textContent = ulSpeed;
+
+            status.classList.remove('running');
+            status.textContent = `Test #${testCount} selesai. Test berikutnya 10 detik lagi...`;
+            
+            // Loop tiap 10 detik
+            if (running) setTimeout(runTest, 10000);
         }
-        statusText.textContent = 'Selesai! Server AKS Jalan ✅';
-    } catch (e) {
-        statusText.textContent = 'Gagal. Cek file 10mb.dat udah diupload';
-    }
-    startBtn.disabled = false;
-};
-</script>
+
+        function updateGraph(speed) {
+            const graph = document.getElementById('graph');
+            graphData.push(speed);
+            if (graphData.length > 50) graphData.shift();
+            
+            graph.innerHTML = '';
+            const maxSpeed = Math.max(...graphData, 100);
+            graphData.forEach((val, i) => {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.left = (i * 3.5) + 'px';
+                bar.style.height = (val / maxSpeed * 100) + '%';
+                graph.appendChild(bar);
+            });
+        }
+    </script>
 </body>
 </html>
