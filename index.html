@@ -3,43 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKS Speedtest Pro Max - Anak Kampung Setudio</title>
+    <title>AKS Speedtest Pro Max - Deteksi Sinyal & IP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;700&display=swap');
         :root {
             --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #e2e8f0;
-            --text2: #94a3b8; --accent: #ef4444; --glow: rgba(239, 68, 68, 0.4);
+            --text2: #94a3b8; --accent: #ef4444; --glow: rgba(239, 68, 68, 0.4); --green: #22c55e;
         }
-        [data-theme="light"] {
-            --bg: #f1f5f9; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
-            --text2: #475569; --accent: #dc2626; --glow: rgba(220, 38, 38, 0.2);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: 0.3s; }
         body {
             background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif;
             display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;
         }
        .card {
             background: var(--card); border: 1px solid var(--border); border-radius: 24px;
-            padding: 30px; max-width: 600px; width: 100%; text-align: center;
-            box-shadow: 0 0 60px var(--glow); position: relative;
+            padding: 30px; max-width: 650px; width: 100%; text-align: center;
+            box-shadow: 0 0 60px var(--glow);
         }
        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
        .logo-wrap { display: flex; align-items: center; gap: 10px; }
        .logo-aks { width: 50px; border-radius: 50%; border: 2px solid var(--accent); }
         h1 { font-family: 'Orbitron', sans-serif; font-size: 24px; }
         h1 span { color: var(--accent); }
-       .theme-btn { background: none; border: 1px solid var(--border); color: var(--text2); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
-       .chart-container { position: relative; height: 250px; margin: 20px auto; }
+       .chart-container { position: relative; height: 200px; margin: 15px auto; }
         #status { color: #fbbf24; margin: 15px 0; font-weight: 600; min-height: 24px; font-family: 'Orbitron'; }
-       .hasil { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 25px 0; }
+       .hasil { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
        .box { background: var(--bg); padding: 15px 5px; border-radius: 12px; border: 1px solid var(--border); }
        .box h3 { color: var(--text2); font-size: 10px; margin-bottom: 8px; text-transform: uppercase; }
-       .angka { font-family: 'Orbitron', sans-serif; font-size: 22px; color: var(--text); }
+       .angka { font-family: 'Orbitron', sans-serif; font-size: 20px; color: var(--text); }
        .satuan { font-size: 10px; color: var(--text2); }
-       .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+       .network-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+       .network-box { background: var(--bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: left; }
+       .network-box h4 { font-size: 10px; color: var(--text2); margin-bottom: 5px; }
+       .network-box p { font-size: 13px; font-weight: 600; color: var(--text); }
+       .network-box.signal { color: var(--green); }
+       .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
        .btn-test {
             background: linear-gradient(45deg, #dc2626, var(--accent)); color: white;
             padding: 16px; border-radius: 15px; border: none; font-weight: 700;
@@ -47,13 +47,7 @@
         }
        .btn-share { background: var(--bg); border: 1px solid var(--border); color: var(--text); }
        .btn-test:disabled { background: #475569; box-shadow: none; }
-       .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; font-size: 11px; color: var(--text2); text-align: left; }
-       .history { margin-top: 20px; text-align: left; }
-       .history h4 { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
-        #historyList { font-size: 11px; color: var(--text2); max-height: 80px; overflow-y: auto; }
-       .glitch { animation: glitch 1s linear infinite; }
-        @keyframes glitch { 2%,64%{transform:translate(2px,0) skew(0deg)} 4%,60%{transform:translate(-2px,0) skew(0deg)} 62%{transform:translate(0,0) skew(5deg)} }
-        @media (max-width: 500px) {.hasil { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) {.hasil { grid-template-columns: 1fr 1fr; }.network-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -61,16 +55,12 @@
         <div class="header">
             <div class="logo-wrap">
                 <img src="./logo.png" alt="AKS" class="logo-aks">
-                <h1>AKS <span>SPEEDTEST</span></h1>
+                <h1>AKS <span>NET DETECTOR</span></h1>
             </div>
-            <button class="theme-btn" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
         </div>
 
-        <div class="chart-container">
-            <canvas id="speedChart"></canvas>
-        </div>
-
-        <div id="status">Pencet GO buat ngetes jaringan 6G lu 🔥</div>
+        <div class="chart-container"><canvas id="speedChart"></canvas></div>
+        <div id="status">Siap ngetes jaringan + sinyal lu bos 🔥</div>
 
         <div class="hasil">
             <div class="box"><h3><i class="fa-solid fa-download"></i> Download</h3><div class="angka" id="download">-</div><div class="satuan">Mbps</div></div>
@@ -79,35 +69,25 @@
             <div class="box"><h3><i class="fa-solid fa-wave-square"></i> Jitter</h3><div class="angka" id="jitter">-</div><div class="satuan">ms</div></div>
         </div>
 
+        <div class="network-grid">
+            <div class="network-box"><h4><i class="fa-solid fa-globe"></i> IP PUBLIK</h4><p id="ipPublic">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-house-signal"></i> IP LOKAL</h4><p id="ipLocal">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-tower-cell"></i> JENIS JARINGAN</h4><p id="netType" class="signal">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-gauge-high"></i> KUALITAS SINYAL</h4><p id="netEffective" class="signal">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-wifi"></i> ISP / PROVIDER</h4><p id="isp">...</p></div>
+            <div class="network-box"><h4><i class="fa-solid fa-location-dot"></i> LOKASI</h4><p id="lokasi">...</p></div>
+        </div>
+
         <div class="btn-group">
-            <button class="btn-test" id="startBtn"><i class="fa-solid fa-bolt"></i> GO</button>
+            <button class="btn-test" id="startBtn"><i class="fa-solid fa-bolt"></i> TEST SEMUA</button>
             <button class="btn-test btn-share" id="shareBtn" disabled><i class="fa-brands fa-whatsapp"></i> SHARE</button>
-        </div>
-
-        <div class="info-grid">
-            <span><i class="fa-solid fa-server"></i> Server: <b id="server">Auto</b></span>
-            <span><i class="fa-solid fa-location-dot"></i> Lokasi: <b id="lokasi">...</b></span>
-            <span><i class="fa-solid fa-wifi"></i> ISP: <b id="isp">...</b></span>
-            <span><i class="fa-solid fa-desktop"></i> IP: <b id="ip">...</b></span>
-        </div>
-
-        <div class="history">
-            <h4><i class="fa-solid fa-clock-rotate-left"></i> HISTORY TEST:</h4>
-            <div id="historyList">Belum ada test</div>
         </div>
     </div>
 
 <script>
 const el = id => document.getElementById(id);
-const statusText = el('status'), startBtn = el('startBtn'), shareBtn = el('shareBtn'), themeBtn = el('themeBtn');
-let chart, testData = { download: 0, upload: 0, ping: 0, jitter: 0, ip: '', isp: '' };
-
-// Theme Toggle
-themeBtn.onclick = () => {
-    const isLight = document.body.dataset.theme === 'light';
-    document.body.dataset.theme = isLight? '' : 'light';
-    themeBtn.innerHTML = isLight? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
-};
+const statusText = el('status'), startBtn = el('startBtn'), shareBtn = el('shareBtn');
+let chart, testData = {};
 
 // Chart Setup
 const ctx = el('speedChart').getContext('2d');
@@ -120,89 +100,105 @@ function updateChart(speed, max = 100) {
     const percent = Math.min((speed / max) * 100, 100);
     chart.data.datasets[0].data = [percent, 100 - percent];
     chart.update('none');
-    el('status').innerHTML = `<span class="glitch">${speed.toFixed(2)} Mbps</span>`;
+    statusText.innerHTML = `${speed.toFixed(2)} Mbps`;
 }
 
-// Get User Info
+// 1. DETEKSI INFO JARINGAN & SINYAL
+function detectNetwork() {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn) {
+        el('netType').textContent = conn.type? conn.type.toUpperCase() : 'Unknown';
+        el('netEffective').textContent = `${conn.effectiveType.toUpperCase()} | ${conn.downlink} Mbps`;
+        testData.netType = conn.type;
+        testData.netEffective = conn.effectiveType;
+        testData.downlink = conn.downlink;
+    } else {
+        el('netType').textContent = 'Tidak Support';
+        el('netEffective').textContent = 'Browser Lama';
+    }
+}
+
+// 2. DETEKSI IP LOKAL VIA WebRTC
+function getLocalIP() {
+    return new Promise((resolve) => {
+        const pc = new RTCPeerConnection({iceServers:[]});
+        pc.createDataChannel('');
+        pc.createOffer().then(offer => pc.setLocalDescription(offer));
+        pc.onicecandidate = (ice) => {
+            if (!ice ||!ice.candidate ||!ice.candidate.candidate) return;
+            const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate)[1];
+            el('ipLocal').textContent = ip;
+            testData.ipLocal = ip;
+            pc.onicecandidate = () => {};
+            resolve(ip);
+        };
+        setTimeout(() => resolve('Gagal'), 1000);
+    });
+}
+
+// 3. DETEKSI IP PUBLIK + ISP + LOKASI
 fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
-    el('ip').textContent = data.ip; el('isp').textContent = data.org;
-    el('lokasi').textContent = `${data.city}, ${data.country_code}`; el('server').textContent = data.country_name;
-    testData.ip = data.ip; testData.isp = data.org;
+    el('ipPublic').textContent = data.ip;
+    el('isp').textContent = data.org;
+    el('lokasi').textContent = `${data.city}, ${data.country_code}`;
+    testData.ipPublic = data.ip; testData.isp = data.org; testData.lokasi = data.city;
 });
 
-// History
-function loadHistory() {
-    const history = JSON.parse(localStorage.getItem('aks_history') || '[]');
-    el('historyList').innerHTML = history.length? history.map(h =>
-        `D: ${h.download} | U: ${h.upload} | P: ${h.ping}ms - ${h.time}`
-    ).join('<br>') : 'Belum ada test';
-}
-function saveHistory() {
-    const history = JSON.parse(localStorage.getItem('aks_history') || '[]');
-    history.unshift({...testData, time: new Date().toLocaleTimeString('id-ID') });
-    localStorage.setItem('aks_history', JSON.stringify(history.slice(0, 5)));
-    loadHistory();
-}
-loadHistory();
+// Jalanin deteksi pas load
+detectNetwork(); getLocalIP();
 
-// Test Functions
-async function testPing() {
-    statusText.textContent = 'Mengukur Ping...';
-    let pings = [];
-    for (let i = 0; i < 8; i++) {
-        let start = performance.now();
-        await fetch('https://www.cloudflare.com/cdn-cgi/trace', { cache: 'no-store' });
-        pings.push(performance.now() - start);
-    }
-    testData.ping = (pings.reduce((a, b) => a + b) / pings.length).toFixed(0);
-    let avg = pings.reduce((a, b) => a + b) / pings.length;
-    testData.jitter = Math.sqrt(pings.map(x => Math.pow(x - avg, 2)).reduce((a, b) => a + b) / pings.length).toFixed(0);
-    el('ping').textContent = testData.ping; el('jitter').textContent = testData.jitter;
-}
-
-async function testDownload() {
-    statusText.textContent = 'Menguji Download...';
-    const url = 'https://speed.cloudflare.com/__down?bytes=50000000'; // 50MB
-    const startTime = performance.now();
-    const res = await fetch(url, { cache: 'no-store' });
-    const reader = res.body.getReader();
-    let received = 0;
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        received += value.length;
-        const speed = ((received * 8) / ((performance.now() - startTime) / 1000) / 1024).toFixed(2);
-        updateChart(speed); el('download').textContent = speed; testData.download = speed;
-    }
-}
-
-async function testUpload() {
-    statusText.textContent = 'Menguji Upload...';
-    const data = new Blob([new ArrayBuffer(20 * 1024)]); // 20MB
-    const startTime = performance.now();
-    await fetch('https://speed.cloudflare.com/__up', { method: 'POST', body: data });
-    const speed = ((data.size * 8) / ((performance.now() - startTime) / 1000) / 1024 / 1024).toFixed(2);
-    updateChart(speed); el('upload').textContent = speed; testData.upload = speed;
-}
-
-// Start Test
-startBtn.onclick = async () => {
+// 4. SPEEDTEST FUNCTION
+async function runSpeedTest() {
     startBtn.disabled = true; shareBtn.disabled = true;
     try {
-        await testPing();
-        await testDownload();
-        await testUpload();
-        statusText.textContent = 'Test Selesai! GG Gaming 🔥';
-        saveHistory(); shareBtn.disabled = false;
+        // Ping
+        statusText.textContent = 'Test Ping...';
+        let pings = [];
+        for (let i = 0; i < 5; i++) {
+            let start = performance.now();
+            await fetch('https://www.cloudflare.com/cdn-cgi/trace', { cache: 'no-store' });
+            pings.push(performance.now() - start);
+        }
+        testData.ping = (pings.reduce((a, b) => a + b) / pings.length).toFixed(0);
+        let avg = pings.reduce((a, b) => a + b) / pings.length;
+        testData.jitter = Math.sqrt(pings.map(x => Math.pow(x - avg, 2)).reduce((a, b) => a + b) / pings.length).toFixed(0);
+        el('ping').textContent = testData.ping; el('jitter').textContent = testData.jitter;
+
+        // Download
+        statusText.textContent = 'Test Download...';
+        const startTime = performance.now();
+        const res = await fetch('https://speed.cloudflare.com/__down?bytes=50000000', { cache: 'no-store' });
+        const reader = res.body.getReader();
+        let received = 0;
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            received += value.length;
+            testData.download = ((received * 8) / ((performance.now() - startTime) / 1000) / 1024).toFixed(2);
+            updateChart(testData.download); el('download').textContent = testData.download;
+        }
+
+        // Upload
+        statusText.textContent = 'Test Upload...';
+        const data = new Blob([new ArrayBuffer(20 * 1024)]);
+        const startUp = performance.now();
+        await fetch('https://speed.cloudflare.com/__up', { method: 'POST', body: data });
+        testData.upload = ((data.size * 8) / ((performance.now() - startUp) / 1000) / 1024).toFixed(2);
+        el('upload').textContent = testData.upload; updateChart(testData.upload);
+
+        statusText.textContent = 'Selesai! Semua data ketangkep 🔥';
+        shareBtn.disabled = false;
     } catch (e) {
-        statusText.textContent = 'Gagal test. Cek koneksi lu bos';
+        statusText.textContent = 'Gagal test. Cek koneksi';
     }
     startBtn.disabled = false;
-};
+}
 
-// Share
+startBtn.onclick = runSpeedTest;
+
+// 5. SHARE KE WA
 shareBtn.onclick = () => {
-    const text = `Hasil Speedtest AKS gw:\n📥 Download: ${testData.download} Mbps\n📤 Upload: ${testData.upload} Mbps\n📡 Ping: ${testData.ping}ms\nJitter: ${testData.jitter}ms\nISP: ${testData.isp}\n\nCek juga: ${window.location.href}`;
+    const text = `📡 Hasil Net Detector AKS:\n\n📥 Download: ${testData.download} Mbps\n📤 Upload: ${testData.upload} Mbps\n📶 Ping: ${testData.ping}ms | Jitter: ${testData.jitter}ms\n\n🌐 IP Publik: ${testData.ipPublic}\n🏠 IP Lokal: ${testData.ipLocal}\n📡 Jaringan: ${testData.netType} | ${testData.netEffective}\n🏢 ISP: ${testData.isp}\n📍 ${testData.lokasi}\n\nTest juga: ${window.location.href}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
 };
 </script>
